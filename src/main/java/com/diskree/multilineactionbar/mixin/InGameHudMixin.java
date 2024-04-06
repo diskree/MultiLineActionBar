@@ -1,6 +1,6 @@
 package com.diskree.multilineactionbar.mixin;
 
-import net.minecraft.client.font.MultilineText;
+import net.minecraft.class_5489;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.util.math.MatrixStack;
@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class InGameHudMixin {
 
     @Unique
-    private MultilineText overlayMessageText;
+    private class_5489 overlayMessageText;
 
     @Shadow
     private int scaledWidth;
@@ -27,19 +27,19 @@ public abstract class InGameHudMixin {
 
     @Inject(method = "setOverlayMessage", at = @At(value = "HEAD"))
     private void setOverlayMessageInject(Text message, boolean tinted, CallbackInfo ci) {
-        overlayMessageText = MultilineText.create(getFontRenderer(), message, scaledWidth - 50);
+        overlayMessageText = class_5489.method_30890(getFontRenderer(), message, scaledWidth - 50);
     }
 
     @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/text/Text;FFI)I", ordinal = 0))
     private int renderRedirect(TextRenderer textRenderer, MatrixStack matrices, Text text, float x, float y, int color) {
-        int linesCount = overlayMessageText.count();
+        int linesCount = overlayMessageText.method_30887();
         if (linesCount > 1) {
             if (linesCount % 2 == 1) {
                 linesCount--;
             }
             y -= (float) (linesCount * textRenderer.fontHeight) / 2;
         }
-        overlayMessageText.drawCenterWithShadow(matrices, 0, (int) y, textRenderer.fontHeight, color);
+        overlayMessageText.method_30889(matrices, 0, (int) y, textRenderer.fontHeight, color);
         return 0;
     }
 }
