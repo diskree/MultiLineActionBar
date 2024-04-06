@@ -3,9 +3,6 @@ package com.diskree.multilineactionbar.mixin;
 import com.google.common.collect.Lists;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.StringRenderable;
-import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -20,7 +17,7 @@ import java.util.List;
 public abstract class InGameHudMixin {
 
     @Unique
-    private final List<StringRenderable> overlayMessageTextLines = Lists.newArrayList();
+    private final List<String> overlayMessageTextLines = Lists.newArrayList();
 
     @Shadow
     private int scaledWidth;
@@ -28,14 +25,14 @@ public abstract class InGameHudMixin {
     @Shadow
     public abstract TextRenderer getFontRenderer();
 
-    @Inject(method = "setOverlayMessage", at = @At(value = "HEAD"))
-    private void setOverlayMessageInject(Text message, boolean tinted, CallbackInfo ci) {
+    @Inject(method = "setOverlayMessage(Ljava/lang/String;Z)V", at = @At(value = "HEAD"))
+    private void setOverlayMessageInject(String string, boolean bl, CallbackInfo ci) {
         overlayMessageTextLines.clear();
-        overlayMessageTextLines.addAll(getFontRenderer().wrapLines(message, scaledWidth - 50));
+        overlayMessageTextLines.addAll(getFontRenderer().wrapStringToWidthAsList(string, scaledWidth - 50));
     }
 
-    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/text/StringRenderable;FFI)I", ordinal = 0))
-    private int renderRedirect(TextRenderer textRenderer, MatrixStack matrices, StringRenderable text, float x, float y, int color) {
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Ljava/lang/String;FFI)I", ordinal = 0))
+    private int renderRedirect(TextRenderer textRenderer, String text, float x, float y, int color) {
         int linesCount = overlayMessageTextLines.size();
         if (linesCount > 1) {
             if (linesCount % 2 == 1) {
@@ -43,8 +40,8 @@ public abstract class InGameHudMixin {
             }
             y -= (float) (linesCount * textRenderer.fontHeight) / 2;
         }
-        for (StringRenderable stringRenderable : this.overlayMessageTextLines) {
-            textRenderer.draw(matrices, stringRenderable, -textRenderer.getWidth(stringRenderable) / 2f, y, color);
+        for (String line : overlayMessageTextLines) {
+            textRenderer.draw(line, -textRenderer.getStringWidth(line) / 2f, y, color);
             y += textRenderer.fontHeight;
         }
         return 0;
