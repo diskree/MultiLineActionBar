@@ -23,11 +23,11 @@ public abstract class InGameHudMixin {
     private int scaledWidth;
 
     @Shadow
-    public abstract TextRenderer getTextRenderer();
+    public abstract TextRenderer getFontRenderer();
 
     @Inject(method = "setOverlayMessage", at = @At(value = "HEAD"))
     private void setOverlayMessageInject(Text message, boolean tinted, CallbackInfo ci) {
-        overlayMessageText = MultilineText.create(getTextRenderer(), message, scaledWidth - 50);
+        overlayMessageText = MultilineText.create(getFontRenderer(), message, scaledWidth - 50);
     }
 
     @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/text/Text;FFI)I", ordinal = 0))
