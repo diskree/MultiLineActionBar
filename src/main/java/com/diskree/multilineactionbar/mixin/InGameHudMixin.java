@@ -30,7 +30,7 @@ public abstract class InGameHudMixin {
         overlayMessageText = MultilineText.create(getTextRenderer(), message, scaledWidth - 50);
     }
 
-    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;drawWithShadow(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/text/Text;FFI)I", ordinal = 0))
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/text/Text;FFI)I", ordinal = 0))
     private int renderRedirect(TextRenderer textRenderer, MatrixStack matrices, Text text, float x, float y, int color) {
         int linesCount = overlayMessageText.count();
         if (linesCount > 1) {
