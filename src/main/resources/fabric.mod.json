@@ -1,0 +1,30 @@
+{
+	"schemaVersion": 1,
+	"id": "${modId}",
+	"version": "${modVersion}",
+	"name": "${modName}",
+	"description": "Multi-line text support for action bar.",
+	"authors": [
+		"${author}"
+	],
+	"contact": {
+		"sources": "${repoUrl}"
+	},
+	"license": "MIT",
+	"icon": "assets/multilineactionbar/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"com.diskree.multilineactionbar.MultiLineActionBar"
+		]
+	},
+	"mixins": [
+		"multilineactionbar.mixins.json"
+	],
+	"depends": {
+		"java": ">=${minJavaVersion}",
+		"minecraft": ">=${minMinecraftVersion}",
+		"fabricloader": ">=${minLoaderVersion}"
+	},
+	"accessWidener": "multilineactionbar.accesswidener"
+}
